@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { Popover, Button } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import Movie from './Movie';
-import 'antd/dist/antd.css';
-import styles from '../styles/Home.module.css';
+import { useEffect, useState } from "react";
+import { Popover, Button } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import Movie from "./Movie";
+import "antd/dist/antd.css";
+import styles from "../styles/Home.module.css";
 
 function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
 
   // Liked movies (inverse data flow)
   const updateLikedMovies = (movieTitle) => {
-    if (likedMovies.find(movie => movie === movieTitle)) {
-      setLikedMovies(likedMovies.filter(movie => movie !== movieTitle));
+    if (likedMovies.find((movie) => movie === movieTitle)) {
+      setLikedMovies(likedMovies.filter((movie) => movie !== movieTitle));
     } else {
       setLikedMovies([...likedMovies, movieTitle]);
     }
@@ -22,41 +22,44 @@ function Home() {
     return (
       <div key={i} className={styles.likedMoviesContainer}>
         <span className="likedMovie">{data}</span>
-        <FontAwesomeIcon icon={faCircleXmark} onClick={() => updateLikedMovies(data)} className={styles.crossIcon} />
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          onClick={() => updateLikedMovies(data)}
+          className={styles.crossIcon}
+        />
       </div>
     );
   });
 
   const popoverContent = (
-    <div className={styles.popoverContent}>
-      {likedMoviesPopover}
-    </div>
+    <div className={styles.popoverContent}>{likedMoviesPopover}</div>
   );
-  
-//---------------------------------------------------------------------------------------------------------------------------------------------------
 
-const [moviesData , setMoviesData] = useState([]);
+  //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+  const [moviesData, setMoviesData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/movies")
-      .then(response => response.json())
-      .then(data => {
+    fetch("https://backend-mymoviz-theta.vercel.app//movies")
+      .then((response) => response.json())
+      .then((data) => {
         let tab = [];
         let _overview = "";
-        for (let i=0; i < data.movies.length; i++) {
+        for (let i = 0; i < data.movies.length; i++) {
           if (data.movies[i].overview.length > 250) {
-            _overview = data.movies[i].overview.substring(0,247) + '...';
+            _overview = data.movies[i].overview.substring(0, 247) + "...";
           } else {
             _overview = data.movies[i].overview;
           }
 
           tab.push({
-            title : data.movies[i].original_title,
-            poster : "https://image.tmdb.org/t/p/w500/" + data.movies[i].poster_path,
-            voteAverage : data.movies[i].vote_average,
-            voteCount : data.movies[i].vote_count,
-            overview : _overview
-          })
+            title: data.movies[i].original_title,
+            poster:
+              "https://image.tmdb.org/t/p/w500/" + data.movies[i].poster_path,
+            voteAverage: data.movies[i].vote_average,
+            voteCount: data.movies[i].vote_count,
+            overview: _overview,
+          });
         }
         setMoviesData(tab);
       });
@@ -70,7 +73,7 @@ const [moviesData , setMoviesData] = useState([]);
   //voteCount : data.movies.results[i].vote_count
   //overview : data.movies.results[i].overview
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------------------------
 
   // Movies list
   /*
@@ -84,8 +87,19 @@ const [moviesData , setMoviesData] = useState([]);
   */
 
   const movies = moviesData.map((data, i) => {
-    const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={data.overview} poster={data.poster} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
+    const isLiked = likedMovies.some((movie) => movie === data.title);
+    return (
+      <Movie
+        key={i}
+        updateLikedMovies={updateLikedMovies}
+        isLiked={isLiked}
+        title={data.title}
+        overview={data.overview}
+        poster={data.poster}
+        voteAverage={data.voteAverage}
+        voteCount={data.voteCount}
+      />
+    );
   });
 
   return (
@@ -95,14 +109,17 @@ const [moviesData , setMoviesData] = useState([]);
           <img src="logo.png" alt="Logo" />
           <img className={styles.logo} src="logoletter.png" alt="Letter logo" />
         </div>
-        <Popover title="Liked movies" content={popoverContent} className={styles.popover} trigger="click">
+        <Popover
+          title="Liked movies"
+          content={popoverContent}
+          className={styles.popover}
+          trigger="click"
+        >
           <Button>♥ {likedMovies.length} movie(s)</Button>
         </Popover>
       </div>
       <div className={styles.title}>LAST RELEASES</div>
-      <div className={styles.moviesContainer}>
-        {movies}
-      </div>
+      <div className={styles.moviesContainer}>{movies}</div>
     </div>
   );
 }
