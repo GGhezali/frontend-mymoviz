@@ -40,7 +40,7 @@ function Home() {
   const [moviesData, setMoviesData] = useState([]);
 
   useEffect(() => {
-    fetch("https://backend-mymoviz-theta.vercel.app//movies")
+    fetch("https://backend-mymoviz-theta.vercel.app/movies")
       .then((response) => response.json())
       .then((data) => {
         let tab = [];
